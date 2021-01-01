@@ -9,6 +9,7 @@ pygame.init()
 # defining a font for the score
 # you can also use Font('arial.ttf', 25) which is much faster.
 font = pygame.font.SysFont('arial', 25) 
+
 class Direction(Enum):
     # CONSTANTS enumeration members
     RIGHT = 1
@@ -21,16 +22,16 @@ class Direction(Enum):
 Point = namedtuple('Point', ['x', 'y'])
 
 BLOCK_SIZE = 20
-SPEED = 20
+SPEED = 8
 
 # RGB colors as pygame colos
 WHITE = (255, 255, 255)
 RED = (200, 0, 0)
-BLUE1 = (0, 0, 255)
+BLUE = (0, 0, 255)
 BLACK = (0, 0, 0)
 
 class SnakeGame:
-    def __init__(self, width=640, height=380): # default width and height
+    def __init__(self, width=640, height=480): # default width and height
         self.width = width
         self.height = height
 
@@ -44,17 +45,15 @@ class SnakeGame:
         self.direction = Direction.RIGHT
 
         # 2. initial snake head: store coordinates of head
-        self.head = Point(self.width/2, self.height/2) # > Point(x=320.0, y=190.0)
-        
+        self.head = Point(self.width/2, self.height/2) # > Point(x=320.0, y=240.0)
         # 3. initial snake position: store 3 coordinates:
-        # > Point(x=320.0, y=190.0)
-        # > Point(x=300.0, y=190.0)
-        # > Point(x=280.0, y=190.0)
+        # > Point(x=320.0, y=240.0)
+        # > Point(x=300.0, y=240.0)
+        # > Point(x=280.0, y=240.0)
         self.snake = [self.head,
                       Point(self.head.x-BLOCK_SIZE, self.head.y), 
-                      Point(self.head.x-(2*BLOCK_SIZE), self.head.y)
-                      ]
-        
+                      Point(self.head.x-(2*BLOCK_SIZE), self.head.y)]
+        print(self.snake)
         # keep track of score:
         self.score = 0
 
@@ -96,15 +95,24 @@ class SnakeGame:
         self._move(self.direction)
         self.snake.insert(0, self.head)
         
-        # 3. performing two collision checks: 
+        # 3. performing two collision checks (game over checks): 
         game_over = False
         if self._is_collision():
             game_over = True
             return game_over, self.score
 
+        # 4. place new food or keep moving
+        # if snake catches food, increase score:
+        if self.head == self.food:
+            self.score += 1
+            self._place_food()
+        else:
+            # remove last element of snake
+            self.snake.pop()
         
-        # 4. update UI and controlling the Clock speed
+        # 5. update UI and controlling the Clock speed
         self._update_ui()
+        # set speed
         self.clock.tick(SPEED)
         return game_over, self.score
 
@@ -112,7 +120,7 @@ class SnakeGame:
     def _is_collision(self):
         #1. if Snake colliding to a wall
         if (self.head.x > self.width - BLOCK_SIZE) or (self.head.x < 0) or (self.head.y > self.height - BLOCK_SIZE) or (self.head.y < 0):
-            return True
+               return True
         
         #2. if Snake colliding to itself
         if self.head in self.snake[1:]:
@@ -127,14 +135,12 @@ class SnakeGame:
         # 2. draw snake
         for pt in self.snake:
             # Outer: rectangles with blue color with its size as BLOCK_SIZE (width and height)
-            pygame.draw.rect(self.display, BLUE1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
+            pygame.draw.rect(self.display, BLUE, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
             # Inner: rectangles but smaller and white color
             pygame.draw.rect(self.display, WHITE, pygame.Rect(pt.x+4, pt.y+4, BLOCK_SIZE -8, BLOCK_SIZE-8))   
         
         # 3. draw the food
-        # pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
-        test = pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
-        print(test)
+        pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
         # 4. draw score on upper left corner (You need a font)
         text = font.render("Score: " + str(self.score), True, WHITE)
         # 5. display Surface on screen   
