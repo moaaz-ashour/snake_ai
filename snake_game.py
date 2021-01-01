@@ -3,7 +3,7 @@ import random
 from enum import Enum
 from collections import namedtuple
 
-# needed to initialize all modules correctly
+# initialize pygame modules
 pygame.init()
 
 # defining a font for the score
@@ -151,3 +151,6 @@ if __name__ == '__main__':
         if game_over == True:
             break
     print(f'final score: {score}')
+    
+    # uninitialize all pygame modules
+    pygame.quit()
