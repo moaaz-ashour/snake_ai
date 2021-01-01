@@ -91,7 +91,13 @@ class SnakeGame:
                     self.direction = Direction.UP
                 elif event.key == pygame.K_DOWN:
                     self.direction = Direction.DOWN
-        # 2. update UI and controlling the Clock speed
+        
+        # 2. move snake: get new coordinates for the head and update it
+        self._move(self.direction)
+        self.snake.insert(0, self.head)
+        
+        
+        # 3. update UI and controlling the Clock speed
         self._update_ui()
         self.clock.tick(SPEED)
         game_over = False
@@ -118,6 +124,22 @@ class SnakeGame:
         self.display.blit(text, [0,0])
         # 6. update the full display Surface: Without this you won't see any changes
         pygame.display.flip()
+
+    # gets new coordinates for the head and updates it   
+    def _move(self, direction):
+        x = self.head.x
+        y = self.head.y
+        if direction == Direction.RIGHT:
+            x += BLOCK_SIZE
+        elif direction == Direction.LEFT:
+            x -= BLOCK_SIZE
+        elif direction == Direction.DOWN:
+            y += BLOCK_SIZE
+        elif direction == Direction.UP:
+            y -= BLOCK_SIZE
+        # after we have the new coordinates, we can create the head (update it)
+        self.head = Point(x, y)
+            
         
 if __name__ == '__main__':
     # create snake game
