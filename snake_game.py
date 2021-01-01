@@ -6,6 +6,9 @@ from collections import namedtuple
 # needed to initialize all modules correctly
 pygame.init()
 
+# defining a font for the score
+# you can also use Font('arial.ttf', 25) which is much faster.
+font = pygame.font.SysFont('arial', 25) 
 class Direction(Enum):
     # CONSTANTS enumeration members
     RIGHT = 1
@@ -18,6 +21,14 @@ class Direction(Enum):
 Point = namedtuple('Point', ['x', 'y'])
 
 BLOCK_SIZE = 20
+SPEED = 20
+
+# RGB colors as pygame colos
+WHITE = (255, 255, 255)
+RED = (200, 0, 0)
+BLUE1 = (0, 0, 255)
+BLACK = (0, 0, 0)
+
 class SnakeGame:
     def __init__(self, width=640, height=380): # default width and height
         self.width = width
@@ -44,24 +55,62 @@ class SnakeGame:
                       Point(self.head.x-(2*BLOCK_SIZE), self.head.y)
                       ]
         
-        # initial food
+        # keep track of score:
+        self.score = 0
+
+        # init food
         self.food = None
         # randomly place food on display
         self._place_food()
         
-        # keep track of score:
-        self.score = 0
                 
     def _place_food(self):
         # random positions of snake food which are multiple of BLOCK_SIZE
-        x = random.randint(0, (self.width-BLOCK_SIZE//BLOCK_SIZE))*BLOCK_SIZE
-        y = random.randint(0, (self.height-BLOCK_SIZE//BLOCK_SIZE))*BLOCK_SIZE
+        x = random.randint(0, (self.width-BLOCK_SIZE)//BLOCK_SIZE)*BLOCK_SIZE
+        y = random.randint(0, (self.height-BLOCK_SIZE)//BLOCK_SIZE)*BLOCK_SIZE
         # create food Point 
         self.food = Point(x, y)
         # recursive call: make sure the food is not inside the snake
         if self.food in self.snake:
             self._place_food()
-            
+
+    # play steps
+    def play_steps(self):
+        # 1. update UI and controlling the Clock speed
+        self._update_ui()
+        self.clock.tick(SPEED)
+        game_over = False
+        return game_over, self.score
+
+    # updating UI
+    def _update_ui(self):
+        # 1. fill display with black color
+        self.display.fill(BLACK)
+        # 2. draw snake
+        for pt in self.snake:
+            # Outer: rectangles with blue color with its size as BLOCK_SIZE (width and height)
+            pygame.draw.rect(self.display, BLUE1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
+            # Inner: rectangles but smaller and white color
+            pygame.draw.rect(self.display, WHITE, pygame.Rect(pt.x+4, pt.y+4, BLOCK_SIZE -8, BLOCK_SIZE-8))   
+        
+        # 3. draw the food
+        # pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
+        test = pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
+        print(test)
+        # 4. draw score on upper left corner (You need a font)
+        text = font.render("Score: " + str(self.score), True, WHITE)
+        # 5. display Surface on screen   
+        self.display.blit(text, [0,0])
+        # 6. update the full display Surface: Without this you won't see any changes
+        pygame.display.flip()
+        
 if __name__ == '__main__':
     # create snake game
     game = SnakeGame()
+    
+    # game loop
+    while True:
+        game_over, score = game.play_steps()
+        if game_over == True:
+            break
+    print(f'final score: {score}')
