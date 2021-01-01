@@ -49,6 +49,9 @@ class SnakeGame:
         # randomly place food on display
         self._place_food()
         
+        # keep track of score:
+        self.score = 0
+                
     def _place_food(self):
         # random positions of snake food which are multiple of BLOCK_SIZE
         x = random.randint(0, (self.width-BLOCK_SIZE//BLOCK_SIZE))*BLOCK_SIZE
