@@ -17,6 +17,7 @@ class Direction(Enum):
 # create a Point object and accessing x and y coordinates
 Point = namedtuple('Point', ['x', 'y'])
 
+BLOCK_SIZE = 20
 class SnakeGame:
     def __init__(self, width=640, height=380): # default width and height
         self.width = width
@@ -34,7 +35,15 @@ class SnakeGame:
         # 2. initial snake head: store coordinates of head
         self.head = Point(self.width/2, self.height/2) # > Point(x=320.0, y=190.0)
         
-            
+        # 3. initial snake position: store 3 coordinates:
+        # > Point(x=320.0, y=190.0)
+        # > Point(x=300.0, y=190.0)
+        # > Point(x=280.0, y=190.0)
+        self.snake = [self.head,
+                      Point(self.head.x-BLOCK_SIZE, self.head.y), 
+                      Point(self.head.x-(2*BLOCK_SIZE), self.head.y)
+                      ]
+        
 if __name__ == '__main__':
     # create snake game
     game = SnakeGame()
