@@ -10,8 +10,7 @@ class SnakeGame:
         self.height = height
 
         # init display with width and height
-        self.display = pygame.display.set_mode(self.width, self.height)
-
+        self.display = pygame.display.set_mode((self.width, self.height))
 
 
 if __name__ == '__main__':
