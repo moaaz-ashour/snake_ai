@@ -9,10 +9,12 @@ class SnakeGame:
         self.width = width
         self.height = height
 
-        # init display with width and height
+        # init window/display with width and height (create a display Surface)
         self.display = pygame.display.set_mode((self.width, self.height))
+        # control speed of the game
+        self.clock = pygame.time.Clock()
 
-
+        
 if __name__ == '__main__':
-    # create a snake game
+    # create snake game
     game = SnakeGame()
