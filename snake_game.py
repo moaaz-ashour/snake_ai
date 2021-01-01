@@ -44,6 +44,21 @@ class SnakeGame:
                       Point(self.head.x-(2*BLOCK_SIZE), self.head.y)
                       ]
         
+        # initial food
+        self.food = None
+        # randomly place food on display
+        self._place_food()
+        
+    def _place_food(self):
+        # random positions of snake food which are multiple of BLOCK_SIZE
+        x = random.randint(0, (self.width-BLOCK_SIZE//BLOCK_SIZE))*BLOCK_SIZE
+        y = random.randint(0, (self.height-BLOCK_SIZE//BLOCK_SIZE))*BLOCK_SIZE
+        # create food Point 
+        self.food = Point(x, y)
+        # recursive call: make sure the food is not inside the snake
+        if self.food in self.snake:
+            self._place_food()
+            
 if __name__ == '__main__':
     # create snake game
     game = SnakeGame()
