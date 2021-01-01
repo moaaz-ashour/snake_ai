@@ -96,13 +96,30 @@ class SnakeGame:
         self._move(self.direction)
         self.snake.insert(0, self.head)
         
+        # 3. performing two collision checks: 
+        game_over = False
+        if self._is_collision():
+            game_over = True
+            return game_over, self.score
+
         
-        # 3. update UI and controlling the Clock speed
+        # 4. update UI and controlling the Clock speed
         self._update_ui()
         self.clock.tick(SPEED)
-        game_over = False
         return game_over, self.score
 
+    # collision checks:
+    def _is_collision(self):
+        #1. if Snake colliding to a wall
+        if (self.head.x > self.width - BLOCK_SIZE) or (self.head.x < 0) or (self.head.y > self.height - BLOCK_SIZE) or (self.head.y < 0):
+            return True
+        
+        #2. if Snake colliding to itself
+        if self.head in self.snake[1:]:
+            return True
+        
+        return False
+        
     # updating UI
     def _update_ui(self):
         # 1. fill display with black color
