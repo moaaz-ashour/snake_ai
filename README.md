@@ -1,4 +1,4 @@
-# Snake Game with Python from scratch.
+# Snake Game from scratch with Python pygame.
 
 With Practical Reinforcement Learning and PyTorch, the AI learns how to play the game.
 
